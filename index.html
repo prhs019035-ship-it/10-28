@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>野光設計工作室 Wild Light Studio | 品牌企劃・視覺包裝・展覽策劃・互動網頁</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Noto Serif TC, Noto Sans TC, Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- GSAP Core & Plugins -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            themeBg: 'var(--bg-color)',
+            themePrimary: 'var(--primary-color)',
+            themeText: 'var(--text-color)',
+            themeAccent: 'var(--accent-color)',
+            themeCard: 'var(--card-bg)',
+            themeBorder: 'var(--border-color)',
+          },
+          fontFamily: {
+            serif: ['"Noto Serif TC"', 'serif'],
+            sans: ['"Noto Sans TC"', '"Inter"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* CSS Variables & Theme Definition with 0.6s smooth transition */
+    :root {
+      --bg-color: #F4EEE2;     /* 燕麥白 Oatmeal White */
+      --primary-color: #A9B8A0;/* 鼠尾草綠 Sage Green */
+      --text-color: #5C564C;   /* 暖灰 Warm Grey */
+      --accent-color: #E8C9C1; /* 柔粉 Soft Blush */
+      --card-bg: #EAE3D5;
+      --border-color: #D3C9B8;
+    }
+
+    [data-theme="sage"] {
+      --bg-color: #E2E8DF;
+      --primary-color: #728A6A;
+      --text-color: #384235;
+      --accent-color: #F1D6CE;
+      --card-bg: #D2DDD0;
+      --border-color: #B2C3AF;
+    }
+
+    [data-theme="blush"] {
+      --bg-color: #F8EFEF;
+      --primary-color: #B58A82;
+      --text-color: #503A36;
+      --accent-color: #92B08B;
+      --card-bg: #EEDCDA;
+      --border-color: #DEC3BF;
+    }
+
+    body, section, nav, div, header, footer, button, input, textarea {
+      transition: background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Noto Sans TC', 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-color);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 4px;
+    }
+
+    /* Custom Interactive Cursor */
+    .custom-cursor {
+      pointer-events: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      opacity: 0.7;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease-out, width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .custom-cursor.hovering {
+      width: 64px;
+      height: 64px;
+      opacity: 0.95;
+      background-color: var(--text-color);
+    }
+
+    /* Hero Spotlight Overlay */
+    .spotlight-mask {
+      clip-path: circle(0% at 50% 50%);
+    }
+
+    /* Floating aura background for contact form */
+    @keyframes floatAura {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.35; }
+      50% { transform: translate(30px, -20px) scale(1.15); opacity: 0.6; }
+    }
+    .floating-aura {
+      animation: floatAura 12s ease-in-out infinite;
+    }
+
+    /* Line stroke animation */
+    .draw-stroke {
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .drawn .draw-stroke {
+      stroke-dashoffset: 0;
+    }
+
+    /* Button Ripple Fill */
+    .btn-fill {
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .btn-fill::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background-color: var(--primary-color);
+      z-index: -1;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-fill:hover::before {
+      transform: translateX(100%);
+    }
+
+    /* Utility to hide cursor on touch devices */
+    @media (pointer: coarse) {
+      .custom-cursor { display: none !important; }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-stone-300">
+
+  <!-- Custom Cursor -->
+  <div id="cursor" class="custom-cursor hidden md:flex"><span id="cursor-text"></span></div>
+
+  <!-- Fullscreen Opening Loader -->
+  <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#F4EEE2] text-[#8A8479]">
+    <div class="text-center">
+      <h1 id="loader-title" class="font-serif text-4xl md:text-5xl tracking-[0.25em] font-bold mb-3 overflow-hidden">
+        <span class="inline-block transform translate-y-full opacity-0">野</span>
+        <span class="inline-block transform translate-y-full opacity-0">光</span>
+      </h1>
+      <p id="loader-sub" class="text-xs md:text-sm tracking-[0.3em] font-light opacity-0 transform translate-y-4">
+        WILD LIGHT STUDIO
+      </p>
+    </div>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <header class="fixed top-0 left-0 w-full z-40 px-6 md:px-12 py-5 flex items-center justify-between backdrop-blur-md bg-opacity-70 border-b border-themeBorder/40">
+    <a href="#" class="flex items-center gap-2.5 group">
+      <div class="w-3.5 h-3.5 rounded-full bg-themePrimary group-hover:scale-125 transition-transform"></div>
+      <span class="font-serif font-bold text-xl md:text-2xl tracking-widest">野光設計</span>
+      <span class="text-xs md:text-sm tracking-wider opacity-60 hidden sm:inline-block">WILD LIGHT</span>
+    </a>
+
+    <!-- Nav Links -->
+    <nav class="hidden md:flex items-center space-x-8 text-base md:text-lg tracking-widest font-medium">
+      <a href="#portfolio" class="hover:text-themePrimary transition-colors">作品</a>
+      <a href="#services" class="hover:text-themePrimary transition-colors">服務</a>
+      <a href="#philosophy" class="hover:text-themePrimary transition-colors">理念</a>
+      <a href="#about" class="hover:text-themePrimary transition-colors">關於</a>
+      <a href="#audience" class="hover:text-themePrimary transition-colors">合作品牌</a>
+    </nav>
+
+    <!-- Theme Switcher & CTA -->
+    <div class="flex items-center space-x-4">
+      <!-- Color Palette Switcher -->
+      <div class="flex items-center space-x-2 bg-themeCard/60 p-2 rounded-full border border-themeBorder">
+        <button onclick="setTheme('oatmeal')" title="燕麥白 Oatmeal" class="w-5 h-5 rounded-full bg-[#F4EEE2] border border-stone-400 focus:outline-none hover:scale-110 transition-transform"></button>
+        <button onclick="setTheme('sage')" title="鼠尾草綠 Sage" class="w-5 h-5 rounded-full bg-[#A9B8A0] border border-stone-400 focus:outline-none hover:scale-110 transition-transform"></button>
+        <button onclick="setTheme('blush')" title="柔粉 Soft Blush" class="w-5 h-5 rounded-full bg-[#E8C9C1] border border-stone-400 focus:outline-none hover:scale-110 transition-transform"></button>
+      </div>
+
+      <!-- Header Main CTA -->
+      <a href="#contact" class="btn-fill px-5 py-2.5 border border-themeText rounded-full text-sm md:text-base font-medium tracking-wider hover:text-white transition-colors">
+        預約諮詢
+      </a>
+    </div>
+  </header>
+
+  <!-- 1. HERO SECTION -->
+  <section id="hero" class="relative min-h-screen pt-32 pb-16 px-6 md:px-12 flex flex-col justify-between overflow-hidden">
+    <!-- Spotlight Image Background Layer -->
+    <div class="absolute inset-0 z-0 flex items-center justify-center p-4 md:p-12 pointer-events-none">
+      <div id="hero-img-container" class="spotlight-mask w-full h-full max-w-6xl rounded-2xl overflow-hidden relative shadow-2xl">
+        <img id="hero-bg-img" src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1800&q=80" alt="自然茶席與柔和日光光斑" class="w-full h-full object-cover scale-125 transition-transform duration-1000" />
+        <div class="absolute inset-0 bg-stone-900/25"></div>
+      </div>
+    </div>
+
+    <!-- Foreground Text Layer -->
+    <div class="relative z-10 max-w-5xl my-auto pt-12">
+      <!-- Headline with explicit typesetting line breaks -->
+      <h1 id="hero-heading" class="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-widest leading-tight md:leading-snug mb-8 text-stone-800 drop-shadow-sm">
+        <span class="block overflow-hidden"><span class="hero-line inline-block opacity-0">採集在地故事，</span></span>
+        <span class="block overflow-hidden"><span class="hero-line inline-block opacity-0">點亮品牌微光。</span></span>
+      </h1>
+
+      <p id="hero-sub" class="text-base sm:text-lg md:text-xl font-light tracking-widest opacity-0 mb-10 max-w-3xl leading-relaxed text-stone-700 bg-themeBg/85 backdrop-blur-sm p-5 rounded-xl border border-themeBorder/50">
+        野光設計工作室 Wild Light Studio<br />
+        <span class="text-sm sm:text-base opacity-80 mt-2 block font-normal">品牌企劃・視覺包裝・展覽佈局・互動網頁</span>
+      </p>
+
+      <!-- CTA Action Row -->
+      <div id="hero-cta" class="flex flex-wrap items-center gap-5 opacity-0">
+        <a href="#contact" class="px-8 py-4 bg-themeText text-themeBg rounded-full text-base tracking-widest font-medium shadow-md hover:bg-stone-700 hover:shadow-lg transition-all duration-300">
+          預約專案諮詢
+        </a>
+        <a href="#handbook" onclick="downloadHandbook(event)" class="px-7 py-4 border border-themeText/70 rounded-full text-base tracking-widest font-medium hover:bg-themeText/10 transition-all duration-300 flex items-center gap-2.5">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          下載服務手冊
+        </a>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="relative z-10 flex items-center justify-between text-sm tracking-widest opacity-70 pt-8 border-t border-themeText/20 font-medium">
+      <span>TAICHUNG, TAIWAN</span>
+      <div class="flex items-center gap-3">
+        <span>SCROLL TO EXPLORE</span>
+        <div class="w-5 h-7 border border-stone-600 rounded-full flex justify-center p-1">
+          <div class="w-1.5 h-2 bg-stone-700 rounded-full animate-bounce"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. BRAND PHILOSOPHY SECTION -->
+  <section id="philosophy" class="py-28 px-6 md:px-12 max-w-7xl mx-auto border-t border-themeBorder">
+    <div class="text-center max-w-2xl mx-auto mb-20">
+      <span class="text-sm tracking-[0.3em] text-themePrimary uppercase font-bold">OUR PHILOSOPHY</span>
+      <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-widest mt-3">品牌理念：轉譯・整合・溫度</h2>
+    </div>
+
+    <!-- 3 Philosophy Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+      <!-- Card 1: 轉譯 -->
+      <div class="philosophy-card opacity-0 transform translate-y-10 bg-themeCard/50 p-10 rounded-2xl border border-themeBorder/60 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+        <div>
+          <div class="w-20 h-20 mb-8 text-themePrimary">
+            <svg class="w-full h-full stroke-current fill-none" viewBox="0 0 64 64">
+              <path class="draw-stroke" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 48 C20 12, 44 12, 52 48 M20 32 L44 32 M32 16 L32 48" />
+            </svg>
+          </div>
+          <h3 class="font-serif text-2xl md:text-3xl font-bold tracking-widest mb-5">轉譯</h3>
+          <p class="text-base md:text-lg font-light leading-relaxed opacity-90">
+            把在地文化與土地記憶，深挖掘後揉合當代美學語彙，轉換為具備市場共鳴力的當代生活語言。
+          </p>
+        </div>
+        <span class="text-xs md:text-sm tracking-widest opacity-60 mt-10 block font-mono font-semibold">01 / TRANSLATION</span>
+      </div>
+
+      <!-- Card 2: 整合 -->
+      <div class="philosophy-card opacity-0 transform translate-y-10 bg-themeCard/50 p-10 rounded-2xl border border-themeBorder/60 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+        <div>
+          <div class="w-20 h-20 mb-8 text-themePrimary">
+            <svg class="w-full h-full stroke-current fill-none" viewBox="0 0 64 64">
+              <circle class="draw-stroke" stroke-width="2" cx="32" cy="32" r="22" />
+              <path class="draw-stroke" stroke-width="2" stroke-linecap="round" d="M18 32 L46 32 M32 18 L32 46" />
+            </svg>
+          </div>
+          <h3 class="font-serif text-2xl md:text-3xl font-bold tracking-widest mb-5">整合</h3>
+          <p class="text-base md:text-lg font-light leading-relaxed opacity-90">
+            從平面視覺包裝、實體展覽場域到線上互動網頁，提供全方位一站式的風格邏輯與串接體驗。
+          </p>
+        </div>
+        <span class="text-xs md:text-sm tracking-widest opacity-60 mt-10 block font-mono font-semibold">02 / INTEGRATION</span>
+      </div>
+
+      <!-- Card 3: 溫度 -->
+      <div class="philosophy-card opacity-0 transform translate-y-10 bg-themeCard/50 p-10 rounded-2xl border border-themeBorder/60 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+        <div>
+          <div class="w-20 h-20 mb-8 text-themePrimary">
+            <svg class="w-full h-full stroke-current fill-none" viewBox="0 0 64 64">
+              <path class="draw-stroke" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M32 12 C20 12 12 24 12 36 C12 48 22 52 32 52 C42 52 52 48 52 36 C52 24 44 12 32 12 Z M24 28 C28 32 36 32 40 28" />
+            </svg>
+          </div>
+          <h3 class="font-serif text-2xl md:text-3xl font-bold tracking-widest mb-5">溫度</h3>
+          <p class="text-base md:text-lg font-light leading-relaxed opacity-90">
+            堅持手感視覺風格與細致無痕的網頁微互動，讓每一個受眾在觸碰時，都能感受真誠的撫觸與溫度。
+          </p>
+        </div>
+        <span class="text-xs md:text-sm tracking-widest opacity-60 mt-10 block font-mono font-semibold">03 / WARMTH</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. SERVICES SHOWCASE SECTION -->
+  <section id="services" class="py-28 px-6 md:px-12 max-w-7xl mx-auto border-t border-themeBorder">
+    <div class="mb-20">
+      <span class="text-sm tracking-[0.3em] text-themePrimary uppercase font-bold">CAPABILITIES</span>
+      <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-widest mt-3">服務項目</h2>
+    </div>
+
+    <!-- Desktop Interactive Split Layout -->
+    <div class="hidden md:grid grid-cols-12 gap-12 items-start">
+      <!-- Left Service List -->
+      <div class="col-span-5 space-y-4">
+        <div onclick="selectService(0)" onmouseenter="previewService(0)" class="service-nav-item p-6 rounded-xl cursor-pointer transition-all duration-300 border border-transparent hover:border-themeBorder bg-themeCard/30 group">
+          <span class="text-xs tracking-widest font-mono font-semibold opacity-60 block mb-1.5">SERVICE 01</span>
+          <h3 class="font-serif text-2xl font-bold tracking-wider group-hover:text-stone-900 group-hover:scale-105 transition-transform origin-left inline-block">
+            品牌企劃與命名
+          </h3>
+          <div class="h-0.5 w-0 bg-themePrimary group-hover:w-full transition-all duration-300 mt-2.5"></div>
+        </div>
+
+        <div onclick="selectService(1)" onmouseenter="previewService(1)" class="service-nav-item p-6 rounded-xl cursor-pointer transition-all duration-300 border border-transparent hover:border-themeBorder bg-themeCard/30 group">
+          <span class="text-xs tracking-widest font-mono font-semibold opacity-60 block mb-1.5">SERVICE 02</span>
+          <h3 class="font-serif text-2xl font-bold tracking-wider group-hover:text-stone-900 group-hover:scale-105 transition-transform origin-left inline-block">
+            視覺包裝設計
+          </h3>
+          <div class="h-0.5 w-0 bg-themePrimary group-hover:w-full transition-all duration-300 mt-2.5"></div>
+        </div>
+
+        <div onclick="selectService(2)" onmouseenter="previewService(2)" class="service-nav-item p-6 rounded-xl cursor-pointer transition-all duration-300 border border-transparent hover:border-themeBorder bg-themeCard/30 group">
+          <span class="text-xs tracking-widest font-mono font-semibold opacity-60 block mb-1.5">SERVICE 03</span>
+          <h3 class="font-serif text-2xl font-bold tracking-wider group-hover:text-stone-900 group-hover:scale-105 transition-transform origin-left inline-block">
+            展覽空間視覺策展
+          </h3>
+          <div class="h-0.5 w-0 bg-themePrimary group-hover:w-full transition-all duration-300 mt-2.5"></div>
+        </div>
+
+        <div onclick="selectService(3)" onmouseenter="previewService(3)" class="service-nav-item p-6 rounded-xl cursor-pointer transition-all duration-300 border border-transparent hover:border-themeBorder bg-themeCard/30 group">
+          <span class="text-xs tracking-widest font-mono font-semibold opacity-60 block mb-1.5">SERVICE 04</span>
+          <h3 class="font-serif text-2xl font-bold tracking-wider group-hover:text-stone-900 group-hover:scale-105 transition-transform origin-left inline-block">
+            互動網頁設計
+          </h3>
+          <div class="h-0.5 w-0 bg-themePrimary group-hover:w-full transition-all duration-300 mt-2.5"></div>
+        </div>
+      </div>
+
+      <!-- Right Detail Panel -->
+      <div id="service-detail-box" class="col-span-7 bg-themeCard/60 p-10 md:p-12 rounded-2xl border border-themeBorder min-h-[420px] flex flex-col justify-between transition-all duration-300">
+        <div>
+          <span id="service-target" class="inline-block px-4 py-1.5 bg-themePrimary/20 text-stone-800 rounded-full text-sm font-semibold tracking-wider mb-8">
+            適合誰：想重新定位的在地品牌、轉型創業者
+          </span>
+          <h3 id="service-title" class="font-serif text-3xl md:text-4xl font-bold tracking-widest mb-8">
+            品牌企劃與命名
+          </h3>
+          <p id="service-desc" class="text-lg md:text-xl leading-relaxed opacity-90 font-light mb-10">
+            解決「品牌說不清楚、缺乏明確對外故事」的困境。我們透過深度田野採集、品牌DNA梳理，為您制定最具記憶點的命名策略與價值主張。
+          </p>
+        </div>
+        <div class="pt-6 border-t border-themeBorder/40 flex items-center justify-between">
+          <span id="service-solution" class="text-sm md:text-base tracking-widest opacity-80 font-medium">核心解方：故事採集 + 定位梳理 + 語意命名</span>
+          <a href="#contact" class="text-sm md:text-base font-bold tracking-widest underline underline-offset-4 hover:text-themePrimary">諮詢此服務 &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Accordion Layout -->
+    <div class="block md:hidden space-y-4">
+      <div class="border border-themeBorder rounded-xl overflow-hidden bg-themeCard/40">
+        <button onclick="toggleAccordion(this)" class="w-full p-6 text-left font-serif font-bold text-xl flex justify-between items-center">
+          <span>01. 品牌企劃與命名</span>
+          <span class="transform transition-transform text-2xl">+</span>
+        </button>
+        <div class="hidden p-6 border-t border-themeBorder/40 bg-themeBg/50 text-base space-y-4">
+          <p class="font-semibold text-sm text-stone-700">適合：想重新定位的在地品牌</p>
+          <p class="leading-relaxed">解決：品牌說不清楚、缺乏故事與記憶點的問題。</p>
+        </div>
+      </div>
+
+      <div class="border border-themeBorder rounded-xl overflow-hidden bg-themeCard/40">
+        <button onclick="toggleAccordion(this)" class="w-full p-6 text-left font-serif font-bold text-xl flex justify-between items-center">
+          <span>02. 視覺包裝設計</span>
+          <span class="transform transition-transform text-2xl">+</span>
+        </button>
+        <div class="hidden p-6 border-t border-themeBorder/40 bg-themeBg/50 text-base space-y-4">
+          <p class="font-semibold text-sm text-stone-700">適合：農特產、地方茶飲、手作禮盒</p>
+          <p class="leading-relaxed">解決：產品優良但包裝缺乏視覺吸引力與通路競爭力。</p>
+        </div>
+      </div>
+
+      <div class="border border-themeBorder rounded-xl overflow-hidden bg-themeCard/40">
+        <button onclick="toggleAccordion(this)" class="w-full p-6 text-left font-serif font-bold text-xl flex justify-between items-center">
+          <span>03. 展覽空間視覺策展</span>
+          <span class="transform transition-transform text-2xl">+</span>
+        </button>
+        <div class="hidden p-6 border-t border-themeBorder/40 bg-themeBg/50 text-base space-y-4">
+          <p class="font-semibold text-sm text-stone-700">適合：文化單位、展覽策劃者</p>
+          <p class="leading-relaxed">解決：動線與主視覺缺乏整體一致規劃，受眾停留時間短。</p>
+        </div>
+      </div>
+
+      <div class="border border-themeBorder rounded-xl overflow-hidden bg-themeCard/40">
+        <button onclick="toggleAccordion(this)" class="w-full p-6 text-left font-serif font-bold text-xl flex justify-between items-center">
+          <span>04. 互動網頁設計</span>
+          <span class="transform transition-transform text-2xl">+</span>
+        </button>
+        <div class="hidden p-6 border-t border-themeBorder/40 bg-themeBg/50 text-base space-y-4">
+          <p class="font-semibold text-sm text-stone-700">適合：生活風格品牌、獨立創作者</p>
+          <p class="leading-relaxed">解決：線上官網缺乏溫度與品牌記憶點，無法形成轉換。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. HORIZONTAL PORTFOLIO GALLERY (CORE SECTION) -->
+  <section id="portfolio" class="py-28 border-t border-themeBorder relative overflow-hidden">
+    <div class="px-6 md:px-12 max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <span class="text-sm tracking-[0.3em] text-themePrimary uppercase font-bold">SELECTED WORKS</span>
+        <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-widest mt-3">作品展示</h2>
+      </div>
+
+      <!-- Portfolio Category Filter -->
+      <div id="filter-bar" class="flex flex-wrap gap-2.5 text-sm md:text-base">
+        <button onclick="filterPortfolio('all', this)" class="filter-btn px-5 py-2.5 rounded-full border border-themeText bg-themeText text-themeBg font-medium transition-all">全部</button>
+        <button onclick="filterPortfolio('branding', this)" class="filter-btn px-5 py-2.5 rounded-full border border-themeBorder hover:border-themeText transition-all">品牌重塑與包裝</button>
+        <button onclick="filterPortfolio('exhibition', this)" class="filter-btn px-5 py-2.5 rounded-full border border-themeBorder hover:border-themeText transition-all">展覽與空間視覺</button>
+        <button onclick="filterPortfolio('web', this)" class="filter-btn px-5 py-2.5 rounded-full border border-themeBorder hover:border-themeText transition-all">互動式網頁</button>
+      </div>
+    </div>
+
+    <!-- Desktop Horizontal Scroll Track Container -->
+    <div id="horizontal-wrapper" class="relative w-full overflow-hidden">
+      <div id="portfolio-track" class="flex items-center gap-10 px-6 md:px-12 py-8 w-max">
+        
+        <!-- Project Card 1 -->
+        <div data-category="branding" onclick="openCaseStudy(0)" class="project-card cursor-pointer w-[320px] sm:w-[420px] md:w-[480px] shrink-0 group">
+          <div class="overflow-hidden rounded-2xl bg-stone-200 aspect-[4/3] relative mb-5 shadow-md">
+            <img src="https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?auto=format&fit=crop&w=800&q=80" alt="山霧野茶 品牌重塑" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-108" />
+            <div class="absolute top-4 left-4 bg-themeBg/90 backdrop-blur-sm px-3.5 py-1.5 rounded-full text-xs md:text-sm font-semibold tracking-wider">2026</div>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <h3 class="font-serif text-2xl font-bold tracking-wider group-hover:translate-x-1 transition-transform">山霧野茶 Mountain Mist Tea</h3>
+            <span class="text-sm text-themePrimary font-semibold">包裝設計</span>
+          </div>
+          <p class="text-sm md:text-base opacity-75 mt-2">採集高山雲霧紋樣的感官茶包</p>
+        </div>
+
+        <!-- Project Card 2 -->
+        <div data-category="exhibition" onclick="openCaseStudy(1)" class="project-card cursor-pointer w-[320px] sm:w-[420px] md:w-[480px] shrink-0 group">
+          <div class="overflow-hidden rounded-2xl bg-stone-200 aspect-[4/3] relative mb-5 shadow-md">
+            <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80" alt="土地的聲音策展" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-108" />
+            <div class="absolute top-4 left-4 bg-themeBg/90 backdrop-blur-sm px-3.5 py-1.5 rounded-full text-xs md:text-sm font-semibold tracking-wider">2025</div>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <h3 class="font-serif text-2xl font-bold tracking-wider group-hover:translate-x-1 transition-transform">土地的聲音 展覽場域</h3>
+            <span class="text-sm text-themePrimary font-semibold">展覽策劃</span>
+          </div>
+          <p class="text-sm md:text-base opacity-75 mt-2">結合聲音裝置與在地植物纖維展牆</p>
+        </div>
+
+        <!-- Project Card 3 -->
+        <div data-category="web" onclick="openCaseStudy(2)" class="project-card cursor-pointer w-[320px] sm:w-[420px] md:w-[480px] shrink-0 group">
+          <div class="overflow-hidden rounded-2xl bg-stone-200 aspect-[4/3] relative mb-5 shadow-md">
+            <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80" alt="野光藝廊 數位線上展" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-108" />
+            <div class="absolute top-4 left-4 bg-themeBg/90 backdrop-blur-sm px-3.5 py-1.5 rounded-full text-xs md:text-sm font-semibold tracking-wider">2025</div>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <h3 class="font-serif text-2xl font-bold tracking-wider group-hover:translate-x-1 transition-transform">野光藝廊 數位互動體驗</h3>
+            <span class="text-sm text-themePrimary font-semibold">互動網頁</span>
+          </div>
+          <p class="text-sm md:text-base opacity-75 mt-2">三維手繪風數位導覽體驗網頁</p>
+        </div>
+
+        <!-- Project Card 4 -->
+        <div data-category="branding" onclick="openCaseStudy(3)" class="project-card cursor-pointer w-[320px] sm:w-[420px] md:w-[480px] shrink-0 group">
+          <div class="overflow-hidden rounded-2xl bg-stone-200 aspect-[4/3] relative mb-5 shadow-md">
+            <img src="https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=800&q=80" alt="穀雨工藝手作紙" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-108" />
+            <div class="absolute top-4 left-4 bg-themeBg/90 backdrop-blur-sm px-3.5 py-1.5 rounded-full text-xs md:text-sm font-semibold tracking-wider">2024</div>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <h3 class="font-serif text-2xl font-bold tracking-wider group-hover:translate-x-1 transition-transform">穀雨工藝 品牌識別重塑</h3>
+            <span class="text-sm text-themePrimary font-semibold">品牌企劃</span>
+          </div>
+          <p class="text-sm md:text-base opacity-75 mt-2">傳承百年手工紙業的當代新轉譯</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Gallery Progress & Counter Footer -->
+    <div class="px-6 md:px-12 max-w-7xl mx-auto flex items-center justify-between mt-8">
+      <div class="w-full max-w-sm h-1.5 bg-themeBorder rounded-full overflow-hidden mr-6">
+        <div id="gallery-progress" class="h-full bg-themePrimary w-1/4 transition-all duration-150"></div>
+      </div>
+      <span id="gallery-counter" class="font-mono text-base md:text-lg font-bold tracking-widest whitespace-nowrap">01 / 04</span>
+    </div>
+  </section>
+
+  <!-- 5. CASE STUDY FULLSCREEN MODAL (POPUP DETAILED VIEW) -->
+  <div id="case-modal" class="fixed inset-0 z-50 bg-themeBg hidden overflow-y-auto p-6 md:p-12 transition-opacity duration-300">
+    <div class="max-w-5xl mx-auto relative pt-12 pb-24">
+      <!-- Modal Close Button -->
+      <button onclick="closeCaseStudy()" class="fixed top-8 right-8 z-50 w-14 h-14 rounded-full bg-themeCard border border-themeBorder flex items-center justify-center text-2xl font-bold hover:scale-110 transition-transform">
+        &times;
+      </button>
+
+      <!-- Detailed Content Dynamic Injection Box -->
+      <div id="case-modal-body" class="space-y-12">
+        <!-- Content will be rendered dynamically by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. TARGET AUDIENCE SECTION -->
+  <section id="audience" class="py-28 px-6 md:px-12 max-w-7xl mx-auto border-t border-themeBorder">
+    <div class="text-center max-w-xl mx-auto mb-20">
+      <span class="text-sm tracking-[0.3em] text-themePrimary uppercase font-bold">TARGET PARTNERS</span>
+      <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-widest mt-3">你是哪一種品牌？</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Audience 1 -->
+      <div class="audience-card bg-themeCard/40 p-10 rounded-2xl border border-themeBorder hover:border-themePrimary hover:shadow-xl transition-all duration-300 cursor-pointer group" onclick="scrollToService('01')">
+        <span class="text-xs md:text-sm font-mono text-themePrimary font-bold tracking-widest block mb-5">TYPE 01</span>
+        <h3 class="font-serif text-2xl md:text-3xl font-bold tracking-widest mb-5 group-hover:text-stone-900">在地品牌與農特產</h3>
+        <p class="text-sm md:text-base leading-relaxed opacity-85 mb-8">
+          優質農產品、高山茶葉、工藝手作等。常見需求為：重新包裝以進入現代風格選品店，建立清晰故事。
+        </p>
+        <div class="pt-5 border-t border-themeBorder/40 flex items-center justify-between text-sm md:text-base font-bold">
+          <span>推薦：品牌重塑 + 視覺包裝</span>
+          <span class="group-hover:translate-x-1.5 transition-transform text-lg">&rarr;</span>
+        </div>
+      </div>
+
+      <!-- Audience 2 -->
+      <div class="audience-card bg-themeCard/40 p-10 rounded-2xl border border-themeBorder hover:border-themePrimary hover:shadow-xl transition-all duration-300 cursor-pointer group" onclick="scrollToService('04')">
+        <span class="text-xs md:text-sm font-mono text-themePrimary font-bold tracking-widest block mb-5">TYPE 02</span>
+        <h3 class="font-serif text-2xl md:text-3xl font-bold tracking-widest mb-5 group-hover:text-stone-900">餐飲與生活風格品牌</h3>
+        <p class="text-sm md:text-base leading-relaxed opacity-85 mb-8">
+          獨立咖啡館、風格餐飲、生活選品。常見需求為：線上網站體驗優化、特色菜單與整體視覺語彙一致化。
+        </p>
+        <div class="pt-5 border-t border-themeBorder/40 flex items-center justify-between text-sm md:text-base font-bold">
+          <span>推薦：互動網頁 + 品牌識別</span>
+          <span class="group-hover:translate-x-1.5 transition-transform text-lg">&rarr;</span>
+        </div>
+      </div>
+
+      <!-- Audience 3 -->
+      <div class="audience-card bg-themeCard/40 p-10 rounded-2xl border border-themeBorder hover:border-themePrimary hover:shadow-xl transition-all duration-300 cursor-pointer group" onclick="scrollToService('03')">
+        <span class="text-xs md:text-sm font-mono text-themePrimary font-bold tracking-widest block mb-5">TYPE 03</span>
+        <h3 class="font-serif text-2xl md:text-3xl font-bold tracking-widest mb-5 group-hover:text-stone-900">展覽策劃與文化單位</h3>
+        <p class="text-sm md:text-base leading-relaxed opacity-85 mb-8">
+          美術館、地方文化館、獨立展覽活動。常見需求為：全場域主視覺定調、觀展動線引導與展場手冊設計。
+        </p>
+        <div class="pt-5 border-t border-themeBorder/40 flex items-center justify-between text-sm md:text-base font-bold">
+          <span>推薦：展覽策劃 + 空間視覺</span>
+          <span class="group-hover:translate-x-1.5 transition-transform text-lg">&rarr;</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. PROCESS & PRICING TIMELINE SECTION -->
+  <section id="process" class="py-28 px-6 md:px-12 max-w-5xl mx-auto border-t border-themeBorder">
+    <div class="text-center max-w-xl mx-auto mb-20">
+      <span class="text-sm tracking-[0.3em] text-themePrimary uppercase font-bold">WORKFLOW & FEES</span>
+      <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-widest mt-3">服務流程與費用</h2>
+    </div>
+
+    <!-- Interactive Growing Timeline Vertical -->
+    <div class="relative pl-8 md:pl-12 space-y-14">
+      <!-- Growing Central Line Container -->
+      <div class="absolute left-3.5 md:left-5 top-2 bottom-2 w-0.5 bg-themeBorder">
+        <div id="timeline-line" class="w-full bg-themePrimary origin-top scale-y-0 h-full transition-transform duration-700"></div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="timeline-step relative flex items-start gap-8">
+        <div class="step-node w-7 h-7 rounded-full bg-themeBg border-2 border-themePrimary flex items-center justify-center shrink-0 z-10 transition-colors">
+          <div class="w-2.5 h-2.5 rounded-full bg-themePrimary"></div>
+        </div>
+        <div>
+          <span class="text-xs md:text-sm font-mono text-themePrimary font-bold tracking-wider">STEP 01</span>
+          <h3 class="font-serif text-2xl font-bold tracking-wider mt-1">需求諮詢與前瞻診斷</h3>
+          <p class="text-sm md:text-base leading-relaxed opacity-85 mt-2">深入對話了解品牌痛點與願景，釐清專案目標範疇。</p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="timeline-step relative flex items-start gap-8">
+        <div class="step-node w-7 h-7 rounded-full bg-themeBg border-2 border-themeBorder flex items-center justify-center shrink-0 z-10 transition-colors">
+          <div class="w-2.5 h-2.5 rounded-full bg-themeBorder"></div>
+        </div>
+        <div>
+          <span class="text-xs md:text-sm font-mono text-themePrimary font-bold tracking-wider">STEP 02</span>
+          <h3 class="font-serif text-2xl font-bold tracking-wider mt-1">品牌採集與故事梳理</h3>
+          <p class="text-sm md:text-base leading-relaxed opacity-85 mt-2">田野調查、訪談與資料調研，擷取專屬土地記憶與語意關鍵字。</p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="timeline-step relative flex items-start gap-8">
+        <div class="step-node w-7 h-7 rounded-full bg-themeBg border-2 border-themeBorder flex items-center justify-center shrink-0 z-10 transition-colors">
+          <div class="w-2.5 h-2.5 rounded-full bg-themeBorder"></div>
+        </div>
+        <div>
+          <span class="text-xs md:text-sm font-mono text-themePrimary font-bold tracking-wider">STEP 03</span>
+          <h3 class="font-serif text-2xl font-bold tracking-wider mt-1">設計提案與視覺實驗</h3>
+          <p class="text-sm md:text-base leading-relaxed opacity-85 mt-2">提出兩組定調風格進行精準精修與延伸應用示範。</p>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="timeline-step relative flex items-start gap-8">
+        <div class="step-node w-7 h-7 rounded-full bg-themeBg border-2 border-themeBorder flex items-center justify-center shrink-0 z-10 transition-colors">
+          <div class="w-2.5 h-2.5 rounded-full bg-themeBorder"></div>
+        </div>
+        <div>
+          <span class="text-xs md:text-sm font-mono text-themePrimary font-bold tracking-wider">STEP 04</span>
+          <h3 class="font-serif text-2xl font-bold tracking-wider mt-1">製作執行與監修打樣</h3>
+          <p class="text-sm md:text-base leading-relaxed opacity-85 mt-2">印刷打樣校色、網頁前端程式開發與細微動效體驗微調。</p>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="timeline-step relative flex items-start gap-8">
+        <div class="step-node w-7 h-7 rounded-full bg-themeBg border-2 border-themeBorder flex items-center justify-center shrink-0 z-10 transition-colors">
+          <div class="w-2.5 h-2.5 rounded-full bg-themeBorder"></div>
+        </div>
+        <div>
+          <span class="text-xs md:text-sm font-mono text-themePrimary font-bold tracking-wider">STEP 05</span>
+          <h3 class="font-serif text-2xl font-bold tracking-wider mt-1">交付規範與長效維護</h3>
+          <p class="text-sm md:text-base leading-relaxed opacity-85 mt-2">完整視覺規範手冊（VI Guide）、檔案交付與後續維護支援。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Summary Box -->
+    <div class="mt-20 bg-themeCard/60 p-10 rounded-2xl border border-themeBorder flex flex-col md:flex-row items-center justify-between gap-8">
+      <div>
+        <h4 class="font-serif text-2xl font-bold tracking-wider">專案費用概要</h4>
+        <p class="text-sm md:text-base opacity-85 mt-2">單項服務自 NT$ 60,000 起，綜合整合專案將依範疇客製評估。</p>
+      </div>
+      <a href="#handbook" onclick="downloadHandbook(event)" class="px-7 py-4 border border-themeText rounded-full text-sm md:text-base font-bold tracking-wider hover:bg-themeText hover:text-themeBg transition-colors shrink-0">
+        下載完整服務手冊 (PDF)
+      </a>
+    </div>
+  </section>
+
+  <!-- 8. ABOUT STUDIO SECTION -->
+  <section id="about" class="py-28 px-6 md:px-12 max-w-7xl mx-auto border-t border-themeBorder">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
+      <!-- Story Narrative -->
+      <div class="lg:col-span-7 space-y-8">
+        <span class="text-sm tracking-[0.3em] text-themePrimary uppercase font-bold">ABOUT US</span>
+        <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-widest leading-snug">
+          採集者的品牌故事
+        </h2>
+
+        <div id="about-text" class="space-y-5 text-base sm:text-lg md:text-xl leading-relaxed opacity-90 font-light">
+          <p class="about-line">每一座土地都有自己的紋理，每一段故事都有專屬的光芒。</p>
+          <p class="about-line">「野光設計」成立於台中，我們自許為美學的「採集者」。走入田野、聆聽歷史、凝視工藝，將隱匿於日常間的微光採集起來。</p>
+          <p class="about-line">我們相信好設計不單是絢麗的飾品，更是能長久相伴、傳遞價值的載體。</p>
+        </div>
+      </div>
+
+      <!-- Studio Team Grid -->
+      <div class="lg:col-span-5 grid grid-cols-2 gap-6">
+        <!-- Member 1 -->
+        <div class="relative group overflow-hidden rounded-2xl aspect-[3/4] bg-stone-300">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt="設計總監" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-100 group-hover:scale-105" />
+          <div class="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-5 flex flex-col justify-end text-white">
+            <span class="font-serif font-bold text-lg md:text-xl">林微光</span>
+            <span class="text-xs md:text-sm tracking-wider opacity-90 mt-1">品牌企劃 / 視覺總監</span>
+          </div>
+        </div>
+
+        <!-- Member 2 -->
+        <div class="relative group overflow-hidden rounded-2xl aspect-[3/4] bg-stone-300">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" alt="技術總監" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-100 group-hover:scale-105" />
+          <div class="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-5 flex flex-col justify-end text-white">
+            <span class="font-serif font-bold text-lg md:text-xl">陳野</span>
+            <span class="text-xs md:text-sm tracking-wider opacity-90 mt-1">互動網頁 / 前端開發</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. CONTACT FORM SECTION (MAIN CTA DESTINATION) -->
+  <section id="contact" class="py-28 px-6 md:px-12 max-w-5xl mx-auto border-t border-themeBorder relative overflow-hidden">
+    <!-- Pulsing Aura Light background effect -->
+    <div class="floating-aura absolute -top-20 -right-20 w-96 h-96 bg-themePrimary/30 rounded-full filter blur-3xl pointer-events-none"></div>
+
+    <div class="text-center max-w-xl mx-auto mb-20 relative z-10">
+      <span class="text-sm tracking-[0.3em] text-themePrimary uppercase font-bold">GET IN TOUCH</span>
+      <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-widest mt-3">預約專案諮詢</h2>
+      <p class="text-sm md:text-base opacity-75 mt-3">填寫需求後，我們將於 2 個工作天內主動與您聯繫。</p>
+    </div>
+
+    <!-- Contact Form & Info Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-12 relative z-10">
+      <!-- Contact Form -->
+      <form id="contact-form" onsubmit="submitForm(event)" class="md:col-span-8 space-y-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <!-- Name Input -->
+          <div class="relative">
+            <input type="text" id="name" required placeholder=" " class="peer w-full bg-themeCard/50 border border-themeBorder rounded-xl px-4 pt-7 pb-3 text-base focus:outline-none focus:border-themePrimary transition-colors" />
+            <label for="name" class="absolute left-4 top-2 text-xs font-bold tracking-wider opacity-70 peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-2 peer-focus:text-xs transition-all">您的姓名 *</label>
+          </div>
+
+          <!-- Email Input -->
+          <div class="relative">
+            <input type="email" id="email" required placeholder=" " class="peer w-full bg-themeCard/50 border border-themeBorder rounded-xl px-4 pt-7 pb-3 text-base focus:outline-none focus:border-themePrimary transition-colors" />
+            <label for="email" class="absolute left-4 top-2 text-xs font-bold tracking-wider opacity-70 peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-2 peer-focus:text-xs transition-all">信箱 Email *</label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <!-- Service Dropdown -->
+          <div>
+            <label class="block text-xs font-bold tracking-wider opacity-70 mb-2">需求類型 *</label>
+            <select id="service-type" required class="w-full bg-themeCard/50 border border-themeBorder rounded-xl px-4 py-3.5 text-base focus:outline-none focus:border-themePrimary transition-colors">
+              <option value="">請選擇需求類型...</option>
+              <option value="branding">品牌企劃與命名</option>
+              <option value="packaging">視覺包裝設計</option>
+              <option value="exhibition">展覽空間視覺策劃</option>
+              <option value="web">互動網頁設計</option>
+              <option value="other">其他客製化合作</option>
+            </select>
+          </div>
+
+          <!-- Budget Input -->
+          <div>
+            <label class="block text-xs font-bold tracking-wider opacity-70 mb-2">預算區間（選填）</label>
+            <select id="budget" class="w-full bg-themeCard/50 border border-themeBorder rounded-xl px-4 py-3.5 text-base focus:outline-none focus:border-themePrimary transition-colors">
+              <option value="unspecified">尚未確定 / 評估中</option>
+              <option value="60-100k">NT$ 60,000 - 100,000</option>
+              <option value="100-200k">NT$ 100,000 - 200,000</option>
+              <option value="200k+">NT$ 200,000 以上</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="relative">
+          <textarea id="message" rows="4" required placeholder=" " class="peer w-full bg-themeCard/50 border border-themeBorder rounded-xl px-4 pt-7 pb-3 text-base focus:outline-none focus:border-themePrimary transition-colors"></textarea>
+          <label for="message" class="absolute left-4 top-2 text-xs font-bold tracking-wider opacity-70 peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-2 peer-focus:text-xs transition-all">請簡述您的專案需求與時程 *</label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="submit-btn" class="w-full py-4.5 bg-themeText text-themeBg rounded-xl font-bold tracking-widest text-base md:text-lg hover:opacity-90 transition-all flex items-center justify-center gap-2">
+          <span>送出諮詢表單</span>
+        </button>
+      </form>
+
+      <!-- Sidebar Studio Info -->
+      <div class="md:col-span-4 bg-themeCard/40 p-8 rounded-2xl border border-themeBorder/60 space-y-8 self-start">
+        <div>
+          <h4 class="font-serif font-bold text-xl mb-2">野光設計工作室</h4>
+          <p class="text-sm md:text-base opacity-80 leading-relaxed">Wild Light Studio</p>
+        </div>
+
+        <div class="text-sm md:text-base space-y-3 opacity-85 font-medium">
+          <p>📍 Taichung, Taiwan</p>
+          <p>✉️ hello@wildlight.tw</p>
+          <p>🕒 Mon - Fri : 10:00 - 18:00</p>
+        </div>
+
+        <div class="pt-6 border-t border-themeBorder/40">
+          <span class="text-xs tracking-widest font-bold opacity-60 block mb-3">FOLLOW US</span>
+          <div class="flex space-x-4 text-sm md:text-base font-bold">
+            <a href="#" class="hover:text-themePrimary transition-colors">Instagram</a>
+            <span>/</span>
+            <a href="#" class="hover:text-themePrimary transition-colors">Behance</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Section -->
+  <footer class="py-10 px-6 md:px-12 border-t border-themeBorder/40 text-sm tracking-widest opacity-70 flex flex-col md:flex-row justify-between items-center gap-4 font-medium">
+    <p>© 2026 野光設計工作室 Wild Light Studio. All Rights Reserved.</p>
+    <p class="text-xs">DESIGNED WITH PURPOSE & WARMTH</p>
+  </footer>
+
+  <!-- DYNAMIC JAVASCRIPT LOGIC -->
+  <script>
+    /* ==========================================================================
+       1. DATA STRUCTURES & CASE STUDY DATA
+       ========================================================================== */
+    const serviceData = [
+      {
+        target: '適合誰：想重新定位的在地品牌、轉型創業者',
+        title: '品牌企劃與命名',
+        desc: '解決「品牌說不清楚、缺乏明確對外故事」的困境。我們透過深度田野採集、品牌DNA梳理，為您制定最具記憶點的命名策略與價值主張。',
+        solution: '核心解方：故事採集 + 定位梳理 + 語意命名'
+      },
+      {
+        target: '適合誰：農特產、茶飲品牌、手作風格禮盒',
+        title: '視覺包裝設計',
+        desc: '解決「產品內容品質優良，但外觀包裝缺乏視覺吸引力」的痛點。結合材質選擇與觸感結構，讓產品在通路架上脫穎而出。',
+        solution: '核心解方：結構材質選定 + 平面視覺繪製 + 打樣監審'
+      },
+      {
+        target: '適合誰：文化單位、展覽策劃團隊、品牌體驗館',
+        title: '展覽空間視覺策展',
+        desc: '解決「展覽動線混亂與主視覺缺乏整體規劃」的問題。由平面延展至場域空間，讓觀者從入口到展區獲得沉浸體驗。',
+        solution: '核心解方：場域視覺定調 + 觀展導覽指標 + 宣傳載體設計'
+      },
+      {
+        target: '適合誰：獨立生活風格品牌、設計選品工作室',
+        title: '互動網頁設計',
+        desc: '解決「線上官網缺乏溫度與品牌記憶點」的困擾。打造具手感微互動與極速載入的全響應式品牌官網。',
+        solution: '核心解方：客製UI/UX + 手感微互動動效 + RWD極速響應'
+      }
+    ];
+
+    const caseStudies = [
+      {
+        title: '山霧野茶 Mountain Mist Tea',
+        category: '品牌重塑與包裝',
+        year: '2026',
+        client: '山霧高山茶業',
+        location: '台灣 南投',
+        style: '自然手感 / 沉靜霧面',
+        materials: '再生茶渣手造紙、大豆無毒油墨',
+        sketchImg: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80',
+        finalImg: 'https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?auto=format&fit=crop&w=1200&q=80',
+        background: '世代傳承的高山茶園，面對年輕消費市場轉型需求。',
+        challenge: '原包裝風格過於傳統，無法打入都市年輕族群與風格選品通路。',
+        strategy: '採集茶園高山雲霧的晨光顏色，以特製手造紙觸感呈現海拔感，建立全新高質感茶包系列。'
+      },
+      {
+        title: '土地的聲音 展覽場域',
+        category: '展覽與空間視覺',
+        year: '2025',
+        client: '台中文化局',
+        location: '台灣 台中',
+        style: '沉浸式聲音場域',
+        materials: '竹編纖維、聲響傳送裝置',
+        sketchImg: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80',
+        finalImg: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1200&q=80',
+        background: '集結在地十五位聲音創作者的年度土地紀錄特展。',
+        challenge: '聲音為無形載體，如何在實體場域中創造強烈視覺共鳴？',
+        strategy: '運用在地植物纖維編織巨大懸空裝置，讓聲音透過觸感材質在空間中擴散流動。'
+      },
+      {
+        title: '野光藝廊 數位互動體驗',
+        category: '互動式網頁',
+        year: '2025',
+        client: '野光設計工作室',
+        location: '線上全球',
+        style: '微光流動 / 平滑微互動',
+        materials: 'GSAP, WebGL, Tailwind',
+        sketchImg: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80',
+        finalImg: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
+        background: '展現野光工作室多元作品的數位品牌線上總覽。',
+        challenge: '跳脫傳統條列式網頁的枯燥感，建立如同逛實體畫廊的沈浸感受。',
+        strategy: '設計動態流暢的橫向軸線滑動，並結合 GSAP 輕量級視覺流速微互動。'
+      },
+      {
+        title: '穀雨工藝 品牌識別重塑',
+        category: '品牌重塑與包裝',
+        year: '2024',
+        client: '穀雨手作紙工作坊',
+        location: '台灣 埔里',
+        style: '大地色系 / 純粹質樸',
+        materials: '楮皮纖維手造紙',
+        sketchImg: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=800&q=80',
+        finalImg: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=1200&q=80',
+        background: '傳承近百年的傳統紙寮，面臨工藝斷層問題。',
+        challenge: '如何吸引當代年輕創作者重新認識並選用傳統手造紙？',
+        strategy: '重新定義「手造紙作為生活藝術的介面」，推出極簡試樣套組與現代品牌手冊。'
+      }
+    ];
+
+    /* ==========================================================================
+       2. INITIALIZATION & LOADER ANIMATION (GSAP SplitText Effect)
+       ========================================================================== */
+    gsap.registerPlugin(ScrollTrigger, Flip);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Loader Sequence
+      const tl = gsap.timeline();
+
+      tl.to("#loader-title span", {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: "power3.out"
+      })
+      .to("#loader-sub", {
+        y: 0,
+        opacity: 1,
+        duration: 0.6,
+        ease: "power2.out"
+      }, "-=0.3")
+      .to("#loader", {
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.5,
+        onComplete: () => {
+          document.getElementById('loader').style.display = 'none';
+          initHeroAnimations();
+        }
+      });
+
+      initCustomCursor();
+      initScrollAnimations();
+    });
+
+    /* ==========================================================================
+       3. HERO SECTION ANIMATION
+       ========================================================================== */
+    function initHeroAnimations() {
+      const heroTl = gsap.timeline();
+
+      // Spotlight Image Circle Reveal
+      heroTl.to("#hero-img-container", {
+        clipPath: "circle(75% at 50% 50%)",
+        duration: 1.4,
+        ease: "power3.inOut"
+      })
+      .to("#hero-bg-img", {
+        scale: 1,
+        duration: 1.4,
+        ease: "power2.out"
+      }, "<")
+      .to(".hero-line", {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: "power3.out"
+      }, "-=0.6")
+      .to("#hero-sub", {
+        opacity: 1,
+        y: 0,
+        duration: 0.6
+      }, "-=0.3")
+      .to("#hero-cta", {
+        opacity: 1,
+        duration: 0.6
+      }, "-=0.2");
+
+      // Hero Image Parallax Scrub on Scroll
+      gsap.to("#hero-bg-img", {
+        yPercent: 15,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "#hero",
+          start: "top top",
+          end: "bottom top",
+          scrub: true
+        }
+      });
+    }
+
+    /* ==========================================================================
+       4. CUSTOM CURSOR & THEME SWITCHER
+       ========================================================================== */
+    function initCustomCursor() {
+      const cursor = document.getElementById('cursor');
+      const cursorText = document.getElementById('cursor-text');
+
+      window.addEventListener('mousemove', (e) => {
+        gsap.to(cursor, {
+          x: e.clientX,
+          y: e.clientY,
+          duration: 0.1,
+          ease: "power2.out"
+        });
+      });
+
+      // Hover triggers for interactive elements
+      document.querySelectorAll('.project-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          cursor.classList.add('hovering');
+          cursorText.innerText = '查看';
+        });
+        card.addEventListener('mouseleave', () => {
+          cursor.classList.remove('hovering');
+          cursorText.innerText = '';
+        });
+      });
+    }
+
+    function setTheme(theme) {
+      if (theme === 'oatmeal') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', theme);
+      }
+    }
+
+    /* ==========================================================================
+       5. SCROLL TRIGGER ANIMATIONS (PHILOSOPHY, HORIZONTAL GALLERY, TIMELINE)
+       ========================================================================== */
+    function initScrollAnimations() {
+      // Check prefers-reduced-motion
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        gsap.set(".philosophy-card, .about-line", { opacity: 1, y: 0 });
+        return;
+      }
+
+      // Philosophy Cards Sequence
+      gsap.to(".philosophy-card", {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: "#philosophy",
+          start: "top 75%",
+          once: true
+        },
+        onComplete: () => {
+          document.querySelectorAll('#philosophy svg').forEach(svg => svg.classList.add('drawn'));
+        }
+      });
+
+      // Horizontal Portfolio Scroll (Desktop Pin + Scrub)
+      const track = document.getElementById('portfolio-track');
+      if (window.innerWidth >= 768) {
+        const getScrollAmount = () => -(track.scrollWidth - window.innerWidth + 96);
+
+        const tween = gsap.to(track, {
+          x: getScrollAmount,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "#portfolio",
+            start: "top top",
+            end: () => `+=${track.scrollWidth}`,
+            pin: true,
+            scrub: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              // Update progress bar & item counter
+              const progress = self.progress;
+              document.getElementById('gallery-progress').style.width = `${Math.max(10, progress * 100)}%`;
+              
+              const total = caseStudies.length;
+              const currentIndex = Math.min(total, Math.floor(progress * total) + 1);
+              document.getElementById('gallery-counter').innerText = `0${currentIndex} / 0${total}`;
+            }
+          }
+        });
+      }
+
+      // Timeline Vertical Growing Line
+      gsap.to("#timeline-line", {
+        scaleY: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "#process",
+          start: "top 60%",
+          end: "bottom 80%",
+          scrub: true
+        }
+      });
+
+      // Timeline Node Light-Up
+      document.querySelectorAll('.timeline-step').forEach(step => {
+        ScrollTrigger.create({
+          trigger: step,
+          start: "top 70%",
+          onEnter: () => {
+            const node = step.querySelector('.step-node');
+            node.classList.remove('border-themeBorder');
+            node.classList.add('border-themePrimary', 'bg-themePrimary/20');
+          }
+        });
+      });
+    }
+
+    /* ==========================================================================
+       6. SERVICES INTERACTIVE TAB & ACCORDION
+       ========================================================================== */
+    function selectService(index) {
+      const data = serviceData[index];
+      const box = document.getElementById('service-detail-box');
+
+      gsap.to(box, {
+        opacity: 0.3,
+        x: 10,
+        duration: 0.2,
+        onComplete: () => {
+          document.getElementById('service-target').innerText = data.target;
+          document.getElementById('service-title').innerText = data.title;
+          document.getElementById('service-desc').innerText = data.desc;
+          document.getElementById('service-solution').innerText = data.solution;
+
+          gsap.to(box, { opacity: 1, x: 0, duration: 0.3 });
+        }
+      });
+    }
+
+    function previewService(index) {
+      selectService(index);
+    }
+
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const icon = btn.querySelector('span:last-child');
+      
+      content.classList.toggle('hidden');
+      if (content.classList.contains('hidden')) {
+        icon.innerText = '+';
+      } else {
+        icon.innerText = '−';
+      }
+    }
+
+    function scrollToService(num) {
+      document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    /* ==========================================================================
+       7. PORTFOLIO FILTER (GSAP FLIP RE-ORDERING)
+       ========================================================================== */
+    function filterPortfolio(category, btn) {
+      // Update Button Styles
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('bg-themeText', 'text-themeBg');
+        b.classList.add('border-themeBorder');
+      });
+      btn.classList.add('bg-themeText', 'text-themeBg');
+
+      const cards = document.querySelectorAll('.project-card');
+      const state = Flip.getState(cards);
+
+      cards.forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      Flip.from(state, {
+        duration: 0.5,
+        ease: "power2.inOut",
+        absolute: true
+      });
+    }
+
+    /* ==========================================================================
+       8. CASE STUDY POPUP MODAL (DETAILED VIEW WITH BEFORE/AFTER)
+       ========================================================================== */
+    function openCaseStudy(index) {
+      const cs = caseStudies[index];
+      const modal = document.getElementById('case-modal');
+      const body = document.getElementById('case-modal-body');
+
+      body.innerHTML = `
+        <div class="space-y-6">
+          <div class="flex items-center gap-3">
+            <span class="px-4 py-1.5 bg-themePrimary/20 text-stone-800 rounded-full text-sm font-semibold">${cs.category}</span>
+            <span class="text-sm font-mono opacity-70 font-semibold">${cs.year} / ${cs.location}</span>
+          </div>
+          <h1 class="font-serif text-4xl sm:text-6xl font-bold tracking-widest">${cs.title}</h1>
+        </div>
+
+        <!-- Before / After Interactive Sketch vs Final Slider -->
+        <div class="relative w-full aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl group border border-themeBorder">
+          <div class="absolute inset-0">
+            <img src="${cs.finalImg}" alt="成品" class="w-full h-full object-cover" />
+            <span class="absolute top-4 right-4 bg-stone-900/80 text-white text-xs px-3.5 py-1.5 rounded-full font-mono font-semibold">成品完稿</span>
+          </div>
+          <div id="sketch-overlay" class="absolute inset-0 w-1/2 overflow-hidden border-r-2 border-white shadow-lg">
+            <img src="${cs.sketchImg}" alt="草圖" class="w-full h-full object-cover" style="width: 200%; max-width: none;" />
+            <span class="absolute top-4 left-4 bg-stone-900/80 text-white text-xs px-3.5 py-1.5 rounded-full font-mono font-semibold">初稿概念</span>
+          </div>
+          <input type="range" min="0" max="100" value="50" oninput="slideCompare(this)" class="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
+        </div>
+
+        <!-- Meta Data Tags Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 bg-themeCard/50 p-8 rounded-2xl border border-themeBorder text-sm md:text-base">
+          <div>
+            <span class="opacity-60 block mb-1 text-xs md:text-sm">客戶單位</span>
+            <span class="font-semibold">${cs.client}</span>
+          </div>
+          <div>
+            <span class="opacity-60 block mb-1 text-xs md:text-sm">專案地點</span>
+            <span class="font-semibold">${cs.location}</span>
+          </div>
+          <div>
+            <span class="opacity-60 block mb-1 text-xs md:text-sm">風格關鍵字</span>
+            <span class="font-semibold">${cs.style}</span>
+          </div>
+          <div>
+            <span class="opacity-60 block mb-1 text-xs md:text-sm">材質 / 技術</span>
+            <span class="font-semibold">${cs.materials}</span>
+          </div>
+        </div>
+
+        <!-- Narrative Structured Content -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-base md:text-lg leading-relaxed">
+          <div class="space-y-3">
+            <h3 class="font-serif font-bold text-xl md:text-2xl text-themePrimary">01. 背景</h3>
+            <p class="opacity-85">${cs.background}</p>
+          </div>
+          <div class="space-y-3">
+            <h3 class="font-serif font-bold text-xl md:text-2xl text-themePrimary">02. 挑戰</h3>
+            <p class="opacity-85">${cs.challenge}</p>
+          </div>
+          <div class="space-y-3">
+            <h3 class="font-serif font-bold text-xl md:text-2xl text-themePrimary">03. 設計策略</h3>
+            <p class="opacity-85">${cs.strategy}</p>
+          </div>
+        </div>
+
+        <!-- Next Case CTA -->
+        <div class="pt-12 border-t border-themeBorder flex justify-between items-center text-sm md:text-base">
+          <button onclick="closeCaseStudy()" class="font-bold tracking-widest underline underline-offset-4">← 返回作品總覽</button>
+          <a href="#contact" onclick="closeCaseStudy()" class="px-7 py-3.5 bg-themeText text-themeBg rounded-full font-semibold tracking-wider">預約類似案例諮詢 &rarr;</a>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+
+      gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.4 });
+    }
+
+    function closeCaseStudy() {
+      const modal = document.getElementById('case-modal');
+      gsap.to(modal, {
+        opacity: 0,
+        duration: 0.3,
+        onComplete: () => {
+          modal.classList.add('hidden');
+          document.body.style.overflow = 'auto';
+        }
+      });
+    }
+
+    function slideCompare(input) {
+      const overlay = document.getElementById('sketch-overlay');
+      overlay.style.width = `${input.value}%`;
+    }
+
+    /* ==========================================================================
+       9. FORM SUBMISSION & HANDBOOK DOWNLOAD
+       ========================================================================== */
+    function submitForm(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+
+      btn.disabled = true;
+      btn.innerHTML = `
+        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>處理中...</span>
+      `;
+
+      setTimeout(() => {
+        btn.innerHTML = `
+          <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+          <span>已收到需求，我們將於 2 個工作天內回覆！</span>
+        `;
+        btn.classList.add('bg-stone-800');
+        document.getElementById('contact-form').reset();
+      }, 1500);
+    }
+
+    function downloadHandbook(e) {
+      e.preventDefault();
+      alert('已開始下載：野光設計工作室 2026 服務手冊 (PDF)');
+    }
+  </script>
+</body>
+</html>
